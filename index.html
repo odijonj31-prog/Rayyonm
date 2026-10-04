@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>RAYYON Mebel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/styles.css" />
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+
+  <div id="splash" class="splash">
+    <div class="splash-logo">
+      <span class="logo-gold">RAYYON</span><span class="logo-white">MEBEL</span>
+    </div>
+    <div class="splash-loader"></div>
+  </div>
+
+  <div id="app" class="app hidden">
+
+    <header class="topbar">
+      <div class="brand">
+        <span class="logo-gold">RAYYON</span><span class="logo-white">MEBEL</span>
+      </div>
+    </header>
+
+    <main id="main-content" class="main-content">
+
+      <!-- ============ HOME ============ -->
+      <section id="tab-home" class="tab-panel active">
+        <div class="promo-card">
+          <div class="promo-icon">✨</div>
+          <h3>RAYYON Mebel'ga xush kelibsiz!</h3>
+          <p>Bizning oldingi ishlarimiz bilan tanishing. Buyurtma berish uchun do'konimizga tashrif buyuring yoki menejerimiz bilan bog'laning.</p>
+        </div>
+
+        <button id="manager-btn" class="manager-btn">
+          <span>📞</span> Menejerga yozish
+        </button>
+      </section>
+
+      <!-- ============ KATALOG (ISHLARIMIZ) ============ -->
+      <section id="tab-catalog" class="tab-panel">
+        <div class="section-title">
+          <h2>Bizning ishlarimiz</h2>
+          <p>Ilhomlaning — biz allaqachon qilgan ishlarimiz</p>
+        </div>
+        <div id="category-chips" class="category-chips"></div>
+        <div id="portfolio-grid" class="portfolio-grid">
+          <div class="empty-state">
+            <div class="empty-icon">🖼</div>
+            <p>Portfolio tez orada to'ldiriladi</p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ============ MAHSULOT DETALI (modal) ============ -->
+    <div id="detail-overlay" class="detail-overlay hidden">
+      <div class="detail-sheet">
+        <button id="detail-close" class="detail-close">✕</button>
+        <img id="detail-image" class="detail-image" src="" alt="" />
+        <div class="detail-body">
+          <h3 id="detail-title"></h3>
+          <p id="detail-tags" class="detail-tags"></p>
+          <p id="detail-description" class="detail-description"></p>
+          <button id="detail-select-btn" class="primary-btn">📤 Shu mebelni tanlash</button>
+        </div>
+      </div>
+    </div>
+
+    <nav class="bottom-nav">
+      <button class="nav-btn active" data-tab="tab-home">
+        <span class="nav-icon">🏠</span><span>Bosh sahifa</span>
+      </button>
+      <button class="nav-btn" data-tab="tab-catalog">
+        <span class="nav-icon">🖼</span><span>Ishlarimiz</span>
+      </button>
+    </nav>
+
+  </div>
+
+<script src="/assets/app.js"></script>
+</body>
+</html>
