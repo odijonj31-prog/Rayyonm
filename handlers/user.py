@@ -104,7 +104,7 @@ async def contact_manager(message: Message):
     if not MANAGER_USERNAME:
         await message.answer("📞 Menejer bilan bog'lanish hozircha sozlanmagan. Iltimos, keyinroq urinib ko'ring.")
         return
-    await message.answer(f"📞 Menejerimiz bilan bog'lanish uchun bosing: @{MANAGER_USERNAME}")
+    await message.answer(f"📞 Menejerimiz bilan bog'lanish uchun bosing: @Uzuviv")
 
 
 @router.message(F.text == "ℹ️ Biz haqimizda")
@@ -123,8 +123,8 @@ async def show_help(message: Message):
         "📦 Buyurtmalarim — buyurtmangiz holati, narx va to'lovlar\n"
         "📞 Menejer bilan bog'lanish — to'g'ridan-to'g'ri chat\n"
         "ℹ️ Biz haqimizda — kompaniya haqida ma'lumot\n\n"
-        "Buyurtma berish uchun bizning do'konimizga tashrif buyuring — "
-        "menejerimiz sizga yordam beradi!"
+        "Buyurtma berish uchun bizning korxonamizga tashrif buyuring — "
+        "sizga to'liq ma'lumot beramiz"
     )
 
 
@@ -224,7 +224,7 @@ async def finalize_customer_order(message: Message, state: FSMContext, bot: Bot,
         portfolio_item_id=data.get("portfolio_item_id"),
     )
 
-    manager_phone_line = f"\n📞 Savol-takliflar: {MANAGER_PHONE}" if MANAGER_PHONE else ""
+    manager_phone_line = f"\n📞 Savol-takliflar: {+998905984330}" if MANAGER_PHONE else ""
     await message.answer(
         f"✅ <b>So'rovingiz qabul qilindi!</b>\n\n"
         f"📦 Buyurtma #{order.id}\n"
