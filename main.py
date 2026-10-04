@@ -15,19 +15,21 @@ from api.server import create_app
 logging.basicConfig(level=logging.INFO)
 
 
-async def run_bot(bot: Bot):
+def build_dispatcher() -> Dispatcher:
     dp = Dispatcher(storage=MemoryStorage())
-
     dp.include_router(admin.router)
     dp.include_router(user.router)
+    return dp
 
+
+async def run_bot(bot: Bot, dp: Dispatcher):
     await bot.delete_webhook(drop_pending_updates=True)
     print("🤖 Bot polling boshlandi...")
     await dp.start_polling(bot)
 
 
-async def run_webserver(bot: Bot):
-    app = create_app(bot=bot)
+async def run_webserver(bot: Bot, dp: Dispatcher):
+    app = create_app(bot=bot, dp=dp)
     runner = web.AppRunner(app)
     await runner.setup()
     site = web.TCPSite(runner, host="0.0.0.0", port=PORT)
@@ -41,8 +43,9 @@ async def main():
 
     bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 
-    await run_webserver(bot)
-    await run_bot(bot)  # bu abadiy ishlaydi (polling), shuning uchun oxirida turadi
+    dp = build_dispatcher()
+    await run_webserver(bot, dp)
+    await run_bot(bot, dp)  # bu abadiy ishlaydi (polling), shuning uchun oxirida turadi
 
 
 if __name__ == "__main__":
