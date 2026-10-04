@@ -8,8 +8,11 @@ from api.security import validate_init_data
 from api.ai_pricing import explain_price
 from database.requests import (
     get_or_create_user, get_active_portfolio, get_active_options, get_options_by_ids,
-    get_setting, create_order, get_orders_with_payments, get_user,
+    get_setting, create_order, get_orders_with_payments, get_user, get_portfolio_item,
 )
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.storage.base import StorageKey
+from states import CustomerOrderRequest
 
 WEBAPP_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "webapp")
 
@@ -190,6 +193,45 @@ async def api_create_order(request: web.Request):
     return web.json_response({"ok": True, "order_id": order.id})
 
 
+@routes.post("/api/portfolio/select")
+async def api_portfolio_select(request: web.Request):
+    body = await request.json()
+    user = await _identify_user(request, body)
+    if not user:
+        return web.json_response({"ok": False, "error": "invalid_init_data"}, status=401)
+
+    try:
+        item_id = int(body.get("item_id") or 0)
+    except (TypeError, ValueError):
+        item_id = 0
+    item = await get_portfolio_item(item_id)
+    if not item:
+        return web.json_response({"ok": False, "error": "item_not_found"}, status=404)
+
+    bot = request.app["bot"]
+    dp = request.app["dp"]
+    chat_id = user.telegram_id
+
+    state = FSMContext(
+        storage=dp.storage,
+        key=StorageKey(bot_id=bot.id, chat_id=chat_id, user_id=chat_id),
+    )
+    await state.set_state(CustomerOrderRequest.waiting_description)
+    await state.update_data(photo_file_id=item.photo_file_id, portfolio_item_id=item.id)
+
+    caption = (
+        f"🛋 <b>{item.title}</b>\n"
+        + (f"{item.description}\n" if item.description else "")
+        + "\n📝 Shu mebelga o'xshash nima qildirmoqchisiz? O'lcham, rang va boshqa istaklaringizni yozing — "
+          "menejerimizga yetkazamiz.\n\n(Bekor qilish uchun /cancel)"
+    )
+    try:
+        await bot.send_photo(chat_id, photo=item.photo_file_id, caption=caption)
+    except Exception:
+        return web.json_response({"ok": False, "error": "send_failed"}, status=502)
+
+    return web.json_response({"ok": True})
+
 @routes.post("/api/orders/mine")
 async def api_my_orders(request: web.Request):
     body = await request.json()
@@ -223,9 +265,10 @@ async def api_my_orders(request: web.Request):
     })
 
 
-def create_app(bot=None) -> web.Application:
+def create_app(bot=None,dp=None) -> web.Application:
     app = web.Application()
     app["bot"] = bot
+    app["dp"] = dp
     app.add_routes(routes)
     app.router.add_static("/assets/", path=WEBAPP_DIR, name="assets")
     return app
