@@ -130,6 +130,24 @@ function openDetail(itemId) {
       tg?.showAlert?.("Bu funksiya faqat Telegram ilovasida ishlaydi.");
     }
   };
+  selectBtn.onclick = async () => {
+    if (!tg?.initData) {
+      tg?.showAlert?.("Bu funksiya faqat Telegram ilovasida ishlaydi.");
+      return;
+    }
+    selectBtn.disabled = true;
+    try {
+      const data = await apiPost("/api/portfolio/select", { initData: tg.initData, item_id: item.id });
+      if (data.ok) {
+        tg.close();
+        return;
+      }
+      tg.showAlert?.("Xatolik yuz berdi. Iltimos, qayta urinib ko'ring.");
+    } catch (e) {
+      tg.showAlert?.("Aloqa xatosi. Iltimos, qayta urinib ko'ring.");
+    }
+    selectBtn.disabled = false;
+  };
 
   if (tg?.HapticFeedback) { try { tg.HapticFeedback.impactOccurred("light"); } catch (e) {} }
 }
